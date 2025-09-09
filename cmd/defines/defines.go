@@ -9,13 +9,17 @@ const (
 	ProviderName    = "Floyd Göttsch"
 	ProviderWebsite = "https://www.alpa-industrievertretungen.de/"
 	XChallangeCode  = "wh5x1kgdm2koqsc311apskr45ksd"
-	APIKeyVarName   = "WAWIIC_APIKEY"
-	APIVersion      = "1.1"
-	OpenAiApiKeyEnv = "OPENAI_API_KEY"
+	APIKeyVarName   = "WAWIER_APIKEY"
+	APIVersion      = "1.0"
+
+	ServerApiKey = "Bearer c4b55569-3d82-44a0-b9e1-79a06b79eaf1"
 )
 
 var MandatoryAPIScope = []string{
-	"",
+	"salesorder.querysalesorders",
+	"salesorder.querysalesorderlineitems",
+	"item.getitem",
+	"stock.querystocksperitem",
 }
 
 type AppData struct {

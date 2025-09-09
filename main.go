@@ -1,18 +1,14 @@
 package main
 
 import (
-	"os"
-	"os/exec"
-
-	"github.com/Shu-AFK/WawiER/cmd/defines"
-	wawi_registration "github.com/Shu-AFK/WawiER/cmd/wawi/registration"
+	"github.com/Shu-AFK/WawiER/cmd/server"
 )
 
 func main() {
-	_, exists := os.LookupEnv(defines.APIKeyVarName)
+	/*_, exists := os.LookupEnv(defines.APIKeyVarName)
 
 	if !exists {
-		apiKey, err := wawi_registration.Register()
+		apiKey, err := wawiregistration.Register()
 		if err != nil {
 			panic(err)
 		}
@@ -27,5 +23,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-	}
+	}*/
+
+	server.StartServer()
 }
