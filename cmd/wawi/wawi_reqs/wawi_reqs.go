@@ -13,7 +13,7 @@ import (
 
 func QuerySalesOrders(id string) (*Order, error) {
 	var salesOrder Order
-	url := fmt.Sprintf("%s/salesorder?%s", defines.APIBaseURL, id)
+	url := fmt.Sprintf("%ssalesOrders?salesOrderNumber=%s", defines.APIBaseURL, id)
 	resp, err := wawiCreateRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func QuerySalesOrders(id string) (*Order, error) {
 }
 
 func QuerySalesOrderItems(id int) ([]OrderItem, error) {
-	url := fmt.Sprintf("%s/salesOrders/%d/lineitems", defines.APIBaseURL, id)
+	url := fmt.Sprintf("%ssalesOrders/%d/lineitems", defines.APIBaseURL, id)
 	resp, err := wawiCreateRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func QuerySalesOrderItems(id int) ([]OrderItem, error) {
 		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("query sales order items request failed (status %d), body: [%s]", resp.StatusCode, body)
 	}
 
@@ -64,7 +64,7 @@ func QuerySalesOrderItems(id int) ([]OrderItem, error) {
 }
 
 func GetStockData(itemId int) ([]StockItem, error) {
-	url := fmt.Sprintf("%s/stocks?itemId=%d", defines.APIBaseURL, itemId)
+	url := fmt.Sprintf("%sstocks?itemId=%d", defines.APIBaseURL, itemId)
 	resp, err := wawiCreateRequest("GET", url, nil)
 	if err != nil {
 		return nil, err

@@ -1,7 +1,5 @@
 package wawi_reqs
 
-import "time"
-
 type Order struct {
 	TotalItems         int          `json:"TotalItems"`
 	PageNumber         int          `json:"PageNumber"`
@@ -26,7 +24,7 @@ type SalesOrder struct {
 	MerchantVatID            string          `json:"MerchantVatID"`
 	BillingAddress           Address         `json:"BillingAddress"`
 	Shipmentaddress          Address         `json:"Shipmentaddress"`
-	SalesOrderDate           time.Time       `json:"SalesOrderDate"`
+	SalesOrderDate           string          `json:"SalesOrderDate"`
 	SalesOrderPaymentDetails PaymentDetails  `json:"SalesOrderPaymentDetails"`
 	SalesOrderShippingDetail ShippingDetails `json:"SalesOrderShippingDetail"`
 	ColorcodeId              int             `json:"ColorcodeId"`
@@ -70,33 +68,33 @@ type Address struct {
 }
 
 type PaymentDetails struct {
-	PaymentMethodId  int       `json:"PaymentMethodId"`
-	PaymentStatus    string    `json:"PaymentStatus"`
-	TotalGrossAmount float64   `json:"TotalGrossAmount"`
-	CurrencyIso      string    `json:"CurrencyIso"`
-	CurrencyFactor   float64   `json:"CurrencyFactor"`
-	DateOfPayment    time.Time `json:"DateOfPayment"`
-	StillToPay       float64   `json:"StillToPay"`
-	PaymentTarget    float64   `json:"PaymentTarget"`
-	CashDiscount     float64   `json:"CashDiscount"`
-	CashDiscountDays int       `json:"CashDiscountDays"`
+	PaymentMethodId  int         `json:"PaymentMethodId"`
+	PaymentStatus    interface{} `json:"PaymentStatus"`
+	TotalGrossAmount float64     `json:"TotalGrossAmount"`
+	CurrencyIso      string      `json:"CurrencyIso"`
+	CurrencyFactor   float64     `json:"CurrencyFactor"`
+	DateOfPayment    string      `json:"DateOfPayment"`
+	StillToPay       float64     `json:"StillToPay"`
+	PaymentTarget    float64     `json:"PaymentTarget"`
+	CashDiscount     float64     `json:"CashDiscount"`
+	CashDiscountDays int         `json:"CashDiscountDays"`
 }
 
 type ShippingDetails struct {
-	ShippingMethodId       int       `json:"ShippingMethodId"`
-	DeliveryCompleteStatus string    `json:"DeliveryCompleteStatus"`
-	ShippingPriority       int       `json:"ShippingPriority"`
-	ShippingDate           time.Time `json:"ShippingDate"`
-	EstimatedDeliveryDate  time.Time `json:"EstimatedDeliveryDate"`
-	DeliveredDate          time.Time `json:"DeliveredDate"`
-	OnHoldReasonId         int       `json:"OnHoldReasonId"`
-	ExtraWeight            float64   `json:"ExtraWeight"`
+	ShippingMethodId       int     `json:"ShippingMethodId"`
+	DeliveryCompleteStatus int     `json:"DeliveryCompleteStatus"`
+	ShippingPriority       int     `json:"ShippingPriority"`
+	ShippingDate           string  `json:"ShippingDate"`
+	EstimatedDeliveryDate  string  `json:"EstimatedDeliveryDate"`
+	DeliveredDate          string  `json:"DeliveredDate"`
+	OnHoldReasonId         int     `json:"OnHoldReasonId"`
+	ExtraWeight            float64 `json:"ExtraWeight"`
 }
 
 type Cancellation struct {
-	CancellationReasonId int       `json:"CancellationReasonId"`
-	CancellationComment  string    `json:"CancellationComment"`
-	Date                 time.Time `json:"Date"`
+	CancellationReasonId int    `json:"CancellationReasonId"`
+	CancellationComment  string `json:"CancellationComment"`
+	Date                 string `json:"Date"`
 }
 
 type OrderItem struct {
@@ -106,9 +104,9 @@ type OrderItem struct {
 	Name              string  `json:"Name"`
 	SKU               string  `json:"SKU"`
 	Type              int     `json:"Type"`
-	Quantity          int     `json:"Quantity"`
-	QuantityDelivered int     `json:"QuantityDelivered"`
-	QuantityReturned  int     `json:"QuantityReturned"`
+	Quantity          float64 `json:"Quantity"`
+	QuantityDelivered float64 `json:"QuantityDelivered"`
+	QuantityReturned  float64 `json:"QuantityReturned"`
 	SalesUnit         string  `json:"SalesUnit"`
 	SalesPriceNet     float64 `json:"SalesPriceNet"`
 	SalesPriceGross   float64 `json:"SalesPriceGross"`

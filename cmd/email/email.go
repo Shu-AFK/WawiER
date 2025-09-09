@@ -7,11 +7,11 @@ import (
 )
 
 const (
-	SmtpHost = ""
-	SmtpPort = ""
-	Username = ""
-	Password = ""
-	From     = ""
+	SmtpHost = "smtp.ethereal.email"
+	SmtpPort = "587"
+	Username = "lucius.cartwright@ethereal.email"
+	Password = "78wHmdY4d25GG5ca2z"
+	From     = "lucius.cartwright@ethereal.email"
 
 	Subject = "Info zu ihrer Bestellung"
 )
@@ -34,7 +34,15 @@ func SendEmail(emailAddress string, itemString string, customerName string, orde
 
 	auth := smtp.PlainAuth("", Username, Password, SmtpHost)
 
-	message := []byte(fmt.Sprintf("Subject: %s\r\n\r\n%s", Subject, body))
+	message := []byte(fmt.Sprintf(
+		"From: %s\r\n"+
+			"To: %s\r\n"+
+			"Subject: %s\r\n"+
+			"MIME-Version: 1.0\r\n"+
+			"Content-Type: text/plain; charset=\"UTF-8\"\r\n"+
+			"\r\n%s",
+		From, emailAddress, Subject, body,
+	))
 
 	err := smtp.SendMail(SmtpHost+":"+SmtpPort, auth, From, to, message)
 	if err != nil {

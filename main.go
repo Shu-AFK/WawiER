@@ -48,7 +48,9 @@ func main() {
 
 	_, exists := os.LookupEnv(defines.APIKeyVarName)
 
+	log.Printf("[INFO] Checking for API key in environment...\n")
 	if !exists {
+		log.Printf("[INFO] No API key found, registering...\n")
 		apiKey, err := wawi_registration.Register()
 		if err != nil {
 			panic(err)
@@ -64,6 +66,8 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+	} else {
+		log.Printf("[INFO] API key found in environment\n")
 	}
 
 	server.StartServer()

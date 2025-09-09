@@ -36,14 +36,13 @@ func HandleOrderId(orderInfo structs.OrderReq) error {
 		var totalQuantity, totalUnavailable float64
 		for _, s := range stockData {
 			totalQuantity += s.QuantityTotal
-			totalUnavailable += s.QuantityLockedForShipment + s.QuantityInPickingLists + s.QuantityLockedForAvailability
+			totalUnavailable += s.QuantityLockedForShipment + s.QuantityInPickingLists + s.QuantityLockedForAvailability + item.Quantity
 		}
 
 		if totalUnavailable > totalQuantity {
-			missing := totalUnavailable - totalQuantity
-			log.Printf("[INFO] Order %v: Item %v is oversold (missing: %v)\n", orderInfo.OrderId, item.ItemId, missing)
+			log.Printf("[INFO] Order %v: Item %v is oversold (missing: %v)\n", orderInfo.OrderId, item.ItemId, totalQuantity)
 
-			emailItemString += fmt.Sprintf("Artikel %s (%s): Bestellt: %v, Vorhanden: %v\n", item.Name, item.SKU, item.Quantity, missing)
+			emailItemString += fmt.Sprintf("Artikel %s (%s): Bestellt: %v, Vorhanden: %v\n", item.Name, item.SKU, item.Quantity, totalQuantity)
 		} else {
 			log.Printf("[INFO] Order %v: Item %v is not oversold\n", orderInfo.OrderId, item.ItemId)
 		}
