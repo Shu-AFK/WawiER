@@ -1,5 +1,7 @@
 package defines
 
+import "github.com/Shu-AFK/WawiER/assets"
+
 const (
 	AppID           = "WawiER/v1"
 	DisplayName     = "WawiER"
@@ -67,6 +69,6 @@ func ConstructAppData() *AppData {
 		ProviderName:       ProviderName,
 		ProviderWebsite:    ProviderWebsite,
 		MandatoryApiScopes: MandatoryAPIScope,
-		AppIcon:            "",
+		AppIcon:            assets.ImageToB64(),
 	}
 }

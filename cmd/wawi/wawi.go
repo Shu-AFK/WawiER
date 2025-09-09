@@ -40,7 +40,7 @@ func HandleOrderId(orderInfo structs.OrderReq) error {
 		}
 
 		if totalUnavailable > totalQuantity {
-			log.Printf("[INFO] Order %v: Item %v is oversold (missing: %v)\n", orderInfo.OrderId, item.ItemId, totalQuantity)
+			log.Printf("[INFO] Order %v: Item %v is oversold (missing: %v)\n", orderInfo.OrderId, item.ItemId, totalUnavailable-totalQuantity)
 
 			emailItemString += fmt.Sprintf("Artikel %s (%s): Bestellt: %v, Vorhanden: %v\n", item.Name, item.SKU, item.Quantity, totalQuantity)
 		} else {

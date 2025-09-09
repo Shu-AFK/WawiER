@@ -35,7 +35,7 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("[INFO] Success, Handling orderId: %s\n", jsonBody.OrderId)
+	log.Printf("[INFO] Handling orderId: %s\n", jsonBody.OrderId)
 	err = wawi.HandleOrderId(jsonBody)
 	if err != nil {
 		log.Printf("[ERROR] apiHandler -> HandleOrderId: %v\n", err)
