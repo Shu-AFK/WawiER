@@ -3,13 +3,20 @@ package wawi
 import (
 	"fmt"
 	"log"
+	"strings"
 
+	"github.com/Shu-AFK/WawiER/cmd/config"
 	"github.com/Shu-AFK/WawiER/cmd/email"
 	"github.com/Shu-AFK/WawiER/cmd/structs"
 	"github.com/Shu-AFK/WawiER/cmd/wawi/wawi_reqs"
 )
 
 func HandleOrderId(orderInfo structs.OrderReq) error {
+	if !CheckIfNotExcluded(orderInfo.OrderId) {
+		log.Printf("[ERROR] Order number %v is in exlusion list\n", orderInfo.OrderId)
+		return nil
+	}
+
 	order, err := wawi_reqs.QuerySalesOrders(orderInfo.OrderId)
 	if err != nil {
 		return err
@@ -55,4 +62,14 @@ func HandleOrderId(orderInfo structs.OrderReq) error {
 	}
 
 	return nil
+}
+
+func CheckIfNotExcluded(id string) bool {
+	for _, excl := range config.Conf.ExcludedOrderIdStart {
+		if strings.HasPrefix(id, excl) {
+			return false
+		}
+	}
+
+	return true
 }

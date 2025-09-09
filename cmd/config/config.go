@@ -8,9 +8,12 @@ import (
 )
 
 type Config struct {
-	ApiBaseURL string `json:"ApiBaseURL"`
-	ApiVersion string `json:"ApiVersion"`
+	ApiBaseURL           string   `json:"ApiBaseURL"`
+	ApiVersion           string   `json:"ApiVersion"`
+	ExcludedOrderIdStart []string `json:"ExcludedOrderIdStart"`
 }
+
+var Conf Config
 
 func LoadConfig(configPath string) error {
 	data, err := os.ReadFile(configPath)
@@ -23,6 +26,7 @@ func LoadConfig(configPath string) error {
 	if err != nil {
 		return err
 	}
+	Conf = config
 
 	defines.APIBaseURL = config.ApiBaseURL
 	defines.APIVersion = config.ApiVersion
