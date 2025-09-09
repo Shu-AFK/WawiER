@@ -1,7 +1,6 @@
 package defines
 
 const (
-	APIBaseURL      = "http://127.0.0.1:5883/api/eazybusiness/"
 	AppID           = "WawiER/v1"
 	DisplayName     = "WawiER"
 	Description     = "Automatisierung von Email versedungen bei negativem Warenbestand"
@@ -10,15 +9,19 @@ const (
 	ProviderWebsite = "https://www.alpa-industrievertretungen.de/"
 	XChallangeCode  = "wh5x1kgdm2koqsc311apskr45ksd"
 	APIKeyVarName   = "WAWIER_APIKEY"
-	APIVersion      = "1.0"
 
 	ServerApiKey = "Bearer c4b55569-3d82-44a0-b9e1-79a06b79eaf1"
+)
+
+var (
+	APIVersion = "1.0"
+	APIBaseURL = "http://127.0.0.1:5883/api/eazybusiness/"
+	ConfigPath = "config.json"
 )
 
 var MandatoryAPIScope = []string{
 	"salesorder.querysalesorders",
 	"salesorder.querysalesorderlineitems",
-	"item.getitem",
 	"stock.querystocksperitem",
 }
 
