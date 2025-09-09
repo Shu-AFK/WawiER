@@ -2,4 +2,11 @@
 
 ![WawiER Banner](assets/WawiER-Banner.png)
 
-Email sender when the ordered item quantity is less than the available stock.
+A small Go project for processing orders.  
+It checks if items are oversold and notifies customers via email.
+
+## Features
+- Gets notified on order via JTL Wawi workflow web request
+- Fetch order data via REST API
+- Check stock levels 
+- Send email notifications informing the customer if oversell happened
