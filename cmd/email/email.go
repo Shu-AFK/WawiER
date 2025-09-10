@@ -9,23 +9,42 @@ import (
 	"github.com/Shu-AFK/WawiER/cmd/defines"
 )
 
-const Subject = "Info zu ihrer Bestellung"
+const Subject = "Info zu Ihrer Bestellung"
 
-func SendEmail(emailAddress string, itemString string, customerName string, orderId string) {
-	wawiEmail := os.Getenv(defines.WawierEmailAddrEnv)
-	wawiEmailPass := os.Getenv(defines.WawierEmailPassEnv)
-	wawiEmailHost := os.Getenv(defines.WawierEmailSMTPHostEnv)
-	wawiSmtpPort := os.Getenv(defines.WawierSMTPPortEnv)
-	wawiSmtpUsername := os.Getenv(defines.WawierEmailSMTPUserEnv)
+type EmailConfig struct {
+	From     string
+	Password string
+	Host     string
+	Port     string
+	Username string
+}
 
-	if wawiEmail == "" || wawiEmailPass == "" || wawiEmailHost == "" || wawiSmtpPort == "" || wawiSmtpUsername == "" {
-		log.Printf("[ERROR] Wawier Email not set")
-		return
+func LoadEmailConfig() (*EmailConfig, error) {
+	requiredVars := map[string]string{
+		"From":     os.Getenv(defines.WawierEmailAddrEnv),
+		"Password": os.Getenv(defines.WawierEmailPassEnv),
+		"Host":     os.Getenv(defines.WawierEmailSMTPHostEnv),
+		"Port":     os.Getenv(defines.WawierSMTPPortEnv),
+		"Username": os.Getenv(defines.WawierEmailSMTPUserEnv),
 	}
 
-	to := []string{emailAddress}
+	for key, val := range requiredVars {
+		if val == "" {
+			return nil, fmt.Errorf("missing environment variable for %s", key)
+		}
+	}
 
-	textBody := fmt.Sprintf(
+	return &EmailConfig{
+		From:     requiredVars["From"],
+		Password: requiredVars["Password"],
+		Host:     requiredVars["Host"],
+		Port:     requiredVars["Port"],
+		Username: requiredVars["Username"],
+	}, nil
+}
+
+func buildPlainTextBody(customerName, orderID, items string) string {
+	return fmt.Sprintf(
 		"Sehr geehrte/r %s,\r\n\r\n"+
 			"vielen Dank für Ihre Bestellung (Bestellnummer: %s).\r\n\r\n"+
 			"Leider sind folgende Artikel momentan nicht sofort lieferbar, da ein Überverkauf stattgefunden hat:\r\n\r\n"+
@@ -33,12 +52,12 @@ func SendEmail(emailAddress string, itemString string, customerName string, orde
 			"Wir werden Sie informieren, sobald die Artikel wieder verfügbar sind oder eine Teillieferung erfolgt.\r\n\r\n"+
 			"Vielen Dank für Ihr Verständnis.\r\n\r\n"+
 			"Mit freundlichen Grüßen,\r\nIhr Shop-Team",
-		customerName,
-		orderId,
-		itemString,
+		customerName, orderID, items,
 	)
+}
 
-	htmlBody := fmt.Sprintf(
+func buildHTMLBody(customerName, orderID, items string) string {
+	return fmt.Sprintf(
 		"<!doctype html><html><body style=\"font-family:Arial, sans-serif;\">\r\n"+
 			"<p>Sehr geehrte/r %s,</p>\r\n"+
 			"<p>vielen Dank für Ihre Bestellung (Bestellnummer: <strong>%s</strong>).</p>\r\n"+
@@ -48,14 +67,24 @@ func SendEmail(emailAddress string, itemString string, customerName string, orde
 			"<p>Vielen Dank für Ihr Verständnis.</p>\r\n"+
 			"<p>Mit freundlichen Grüßen,<br>Ihr Shop-Team</p>\r\n"+
 			"</body></html>",
-		customerName,
-		orderId,
-		itemString,
+		customerName, orderID, items,
 	)
+}
 
-	auth := smtp.PlainAuth("", wawiSmtpUsername, wawiEmailPass, wawiEmailHost)
+func SendEmail(toAddress, items, customerName, orderID string) {
+	cfg, err := LoadEmailConfig()
+	if err != nil {
+		log.Printf("[ERROR] Email config not set: %v", err)
+		return
+	}
 
-	boundary := "boundary42- alt-part"
+	to := []string{toAddress}
+	auth := smtp.PlainAuth("", cfg.Username, cfg.Password, cfg.Host)
+
+	textBody := buildPlainTextBody(customerName, orderID, items)
+	htmlBody := buildHTMLBody(customerName, orderID, items)
+
+	boundary := "boundary42-alt-part"
 	message := []byte(fmt.Sprintf(
 		"From: %s\r\n"+
 			"To: %s\r\n"+
@@ -72,7 +101,7 @@ func SendEmail(emailAddress string, itemString string, customerName string, orde
 			"Content-Transfer-Encoding: 7bit\r\n\r\n"+
 			"%s\r\n\r\n"+
 			"--%s--\r\n",
-		wawiEmail, emailAddress, Subject, boundary,
+		cfg.From, toAddress, Subject, boundary,
 		boundary,
 		textBody,
 		boundary,
@@ -80,11 +109,11 @@ func SendEmail(emailAddress string, itemString string, customerName string, orde
 		boundary,
 	))
 
-	err := smtp.SendMail(wawiEmailHost+":"+wawiSmtpPort, auth, wawiEmail, to, message)
+	err = smtp.SendMail(cfg.Host+":"+cfg.Port, auth, cfg.From, to, message)
 	if err != nil {
-		log.Printf("[ERROR] Fehler beim Senden der Email an %s: %v\n", emailAddress, err)
+		log.Printf("[ERROR] Fehler beim Senden der Email an %s: %v", toAddress, err)
 		return
 	}
 
-	log.Printf("[INFO] Email erfolgreich an %s gesendet\n", emailAddress)
+	log.Printf("[INFO] Email erfolgreich an %s gesendet", toAddress)
 }
