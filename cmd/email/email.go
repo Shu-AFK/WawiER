@@ -4,19 +4,25 @@ import (
 	"fmt"
 	"log"
 	"net/smtp"
+	"os"
+
+	"github.com/Shu-AFK/WawiER/cmd/defines"
 )
 
-const (
-	SmtpHost = "smtp.ethereal.email"
-	SmtpPort = "587"
-	Username = "enoch.borer@ethereal.email"
-	Password = "envmCkDS96Nzp8jjG2"
-	From     = "enoch.borer@ethereal.email"
-
-	Subject = "Info zu ihrer Bestellung"
-)
+const Subject = "Info zu ihrer Bestellung"
 
 func SendEmail(emailAddress string, itemString string, customerName string, orderId string) {
+	wawiEmail := os.Getenv(defines.WawierEmailAddrEnv)
+	wawiEmailPass := os.Getenv(defines.WawierEmailPassEnv)
+	wawiEmailHost := os.Getenv(defines.WawierEmailSMTPHostEnv)
+	wawiSmtpPort := os.Getenv(defines.WawierSMTPPortEnv)
+	wawiSmtpUsername := os.Getenv(defines.WawierEmailSMTPUserEnv)
+
+	if wawiEmail == "" || wawiEmailPass == "" || wawiEmailHost == "" || wawiSmtpPort == "" || wawiSmtpUsername == "" {
+		log.Printf("[ERROR] Wawier Email not set")
+		return
+	}
+
 	to := []string{emailAddress}
 
 	textBody := fmt.Sprintf(
@@ -47,7 +53,7 @@ func SendEmail(emailAddress string, itemString string, customerName string, orde
 		itemString,
 	)
 
-	auth := smtp.PlainAuth("", Username, Password, SmtpHost)
+	auth := smtp.PlainAuth("", wawiSmtpUsername, wawiEmailPass, wawiEmailHost)
 
 	boundary := "boundary42- alt-part"
 	message := []byte(fmt.Sprintf(
@@ -66,7 +72,7 @@ func SendEmail(emailAddress string, itemString string, customerName string, orde
 			"Content-Transfer-Encoding: 7bit\r\n\r\n"+
 			"%s\r\n\r\n"+
 			"--%s--\r\n",
-		From, emailAddress, Subject, boundary,
+		wawiEmail, emailAddress, Subject, boundary,
 		boundary,
 		textBody,
 		boundary,
@@ -74,7 +80,7 @@ func SendEmail(emailAddress string, itemString string, customerName string, orde
 		boundary,
 	))
 
-	err := smtp.SendMail(SmtpHost+":"+SmtpPort, auth, From, to, message)
+	err := smtp.SendMail(wawiSmtpPort+":"+wawiSmtpPort, auth, wawiEmail, to, message)
 	if err != nil {
 		log.Printf("[ERROR] Fehler beim Senden der Email an %s: %v\n", emailAddress, err)
 		return

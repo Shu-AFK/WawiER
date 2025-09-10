@@ -3,14 +3,19 @@ package defines
 import "github.com/Shu-AFK/WawiER/assets"
 
 const (
-	AppID           = "WawiER/v1"
-	DisplayName     = "WawiER"
-	Description     = "Automatisierung von Email versedungen bei negativem Warenbestand"
-	Version         = "1.0.0"
-	ProviderName    = "Floyd Göttsch"
-	ProviderWebsite = "https://www.alpa-industrievertretungen.de/"
-	XChallangeCode  = "wh5x1kgdm2koqsc311apskr45ksd"
-	APIKeyVarName   = "WAWIER_APIKEY"
+	AppID                  = "WawiER/v1"
+	DisplayName            = "WawiER"
+	Description            = "Automatisierung von Email versedungen bei negativem Warenbestand"
+	Version                = "1.0.0"
+	ProviderName           = "Floyd Göttsch"
+	ProviderWebsite        = "https://www.alpa-industrievertretungen.de/"
+	XChallangeCode         = "wh5x1kgdm2koqsc311apskr45ksd"
+	APIKeyVarName          = "WAWIER_APIKEY"
+	WawierEmailAddrEnv     = "WAWIER_EMAIL_ADDR"
+	WawierEmailPassEnv     = "WAWIER_EMAIL_PASS"
+	WawierEmailSMTPHostEnv = "WAWIER_EMAIL_SMTP_HOST"
+	WawierSMTPPortEnv      = "WAWIER_SMTP_PORT"
+	WawierEmailSMTPUserEnv = "WAWIER_EMAIL_SMTP_USER"
 
 	ServerApiKey = "Bearer c4b55569-3d82-44a0-b9e1-79a06b79eaf1"
 )
