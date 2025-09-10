@@ -80,7 +80,7 @@ func SendEmail(emailAddress string, itemString string, customerName string, orde
 		boundary,
 	))
 
-	err := smtp.SendMail(wawiSmtpPort+":"+wawiSmtpPort, auth, wawiEmail, to, message)
+	err := smtp.SendMail(wawiEmailHost+":"+wawiSmtpPort, auth, wawiEmail, to, message)
 	if err != nil {
 		log.Printf("[ERROR] Fehler beim Senden der Email an %s: %v\n", emailAddress, err)
 		return
