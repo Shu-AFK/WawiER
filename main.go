@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
 
 	"github.com/Shu-AFK/WawiER/cmd/config"
 	"github.com/Shu-AFK/WawiER/cmd/defines"
@@ -15,6 +18,9 @@ import (
 )
 
 func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
 	defaultPath := defines.ConfigPath
 	cfgFlag := flag.String("config", defaultPath, "config file path")
 	flag.Parse()
@@ -70,5 +76,8 @@ func main() {
 		log.Printf("[INFO] API key found in environment\n")
 	}
 
-	server.StartServer()
+	go server.StartServer()
+
+	<-ctx.Done()
+	log.Printf("[INFO] Shutdown requested, cleaning up...")
 }
