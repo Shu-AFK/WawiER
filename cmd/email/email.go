@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/smtp"
 	"os"
+	"strings"
 
 	"github.com/Shu-AFK/WawiER/cmd/config"
 	"github.com/Shu-AFK/WawiER/cmd/defines"
@@ -25,7 +26,7 @@ func LoadEmailConfig() (*EConf, error) {
 	port := os.Getenv(defines.WawierSMTPPortEnv)
 	user := os.Getenv(defines.WawierEmailSMTPUserEnv)
 
-	// Fallback to config.Conv if env vars are empty
+	// Fallback zu config.Conf falls ENV leer
 	if from == "" {
 		from = config.Conf.SmtpSenderEmail
 	}
@@ -55,7 +56,9 @@ func LoadEmailConfig() (*EConf, error) {
 	}, nil
 }
 
-func buildPlainTextBody(customerName, orderID, items string) string {
+func buildPlainTextBody(customerName, orderID string, items []string) string {
+	itemList := "- " + strings.Join(items, "\r\n- ")
+
 	return fmt.Sprintf(
 		"Sehr geehrte/r %s,\r\n\r\n"+
 			"wir möchten Sie darüber informieren, dass einige Artikel Ihrer Bestellung (Bestellnummer: %s) momentan nicht vorrätig sind:\r\n\r\n"+
@@ -67,20 +70,27 @@ func buildPlainTextBody(customerName, orderID, items string) string {
 			"Bitte antworten Sie auf diese E-Mail oder nutzen Sie Ihr Kundenkonto, um uns Ihre Präferenz mitzuteilen.\r\n\r\n"+
 			"Wir entschuldigen uns für die Unannehmlichkeiten und danken Ihnen für Ihre Geduld.\r\n\r\n"+
 			"Mit freundlichen Grüßen,\r\nIhr Shop-Team",
-		customerName, orderID, items,
+		customerName, orderID, itemList,
 	)
 }
 
-func buildHTMLBody(customerName, orderID, items string) string {
+func buildHTMLBody(customerName, orderID string, items []string) string {
+	var b strings.Builder
+	b.WriteString("<ul>")
+	for _, item := range items {
+		b.WriteString(fmt.Sprintf("<li>%s</li>", item))
+	}
+	b.WriteString("</ul>")
+
 	return fmt.Sprintf(
 		"<!doctype html><html lang=\"de\"><head><meta charset=\"UTF-8\">"+
 			"<style>"+
 			"body{font-family:Arial,sans-serif;background:#f4f6f8;color:#333;padding:20px;}"+
 			".container{background:#fff;max-width:600px;margin:auto;padding:20px 30px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1);}"+
 			"h2{color:#2a7ae2;margin-top:0;}"+
-			"ul{padding-left:20px;}"+
+			"ul{padding-left:20px;margin:0;}"+
 			"li{margin-bottom:6px;}"+
-			".items{background:#f6f8fa;padding:12px;border-radius:6px;font-family:monospace;white-space:pre-line;}"+
+			".items{background:#f6f8fa;padding:12px;border-radius:6px;margin:15px 0;}"+
 			"</style></head><body>"+
 			"<div class=\"container\">"+
 			"<h2>Wichtige Information zu Ihrer Bestellung</h2>"+
@@ -97,11 +107,11 @@ func buildHTMLBody(customerName, orderID, items string) string {
 			"<p>Wir entschuldigen uns für die Unannehmlichkeiten und danken Ihnen für Ihre Geduld.</p>"+
 			"<p>Mit freundlichen Grüßen,<br>Ihr Shop-Team</p>"+
 			"</div></body></html>",
-		customerName, orderID, items,
+		customerName, orderID, b.String(),
 	)
 }
 
-func SendEmail(toAddress, items, customerName, orderID string) {
+func SendEmail(toAddress string, items []string, customerName, orderID string) {
 	cfg, err := LoadEmailConfig()
 	if err != nil {
 		log.Printf("[ERROR] Email config not set: %v", err)

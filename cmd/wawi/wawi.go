@@ -33,7 +33,8 @@ func HandleOrderId(orderInfo structs.OrderReq) error {
 	}
 	log.Printf("[INFO] Got %v items in sales order %v, checking for oversell\n", len(items), orderInfo.OrderId)
 
-	emailItemString := ""
+	var emailItems []string // slice statt string
+
 	for _, item := range items {
 		stockData, err := wawi_reqs.GetStockData(item.ItemId)
 		if err != nil {
@@ -43,22 +44,40 @@ func HandleOrderId(orderInfo structs.OrderReq) error {
 		var totalQuantity, totalUnavailable float64
 		for _, s := range stockData {
 			totalQuantity += s.QuantityTotal
-			totalUnavailable += s.QuantityLockedForShipment + s.QuantityInPickingLists + s.QuantityLockedForAvailability + item.Quantity
+			totalUnavailable += s.QuantityLockedForShipment +
+				s.QuantityInPickingLists +
+				s.QuantityLockedForAvailability +
+				item.Quantity
 		}
 
 		if totalUnavailable > totalQuantity {
-			log.Printf("[INFO] Order %v: Item %v is oversold (missing: %v)\n", orderInfo.OrderId, item.ItemId, totalUnavailable-totalQuantity)
+			log.Printf("[INFO] Order %v: Item %v is oversold (missing: %v)\n",
+				orderInfo.OrderId, item.ItemId, totalUnavailable-totalQuantity)
 
-			emailItemString += fmt.Sprintf("Artikel %s (%s): Bestellt: %v, Vorhanden: %v\n", item.Name, item.SKU, item.Quantity, totalQuantity)
+			emailItems = append(emailItems,
+				fmt.Sprintf("Artikel %s (%s): Bestellt: %v, Vorhanden: %v",
+					item.Name, item.SKU, item.Quantity, totalQuantity))
 		} else {
-			log.Printf("[INFO] Order %v: Item %v is not oversold\n", orderInfo.OrderId, item.ItemId)
+			log.Printf("[INFO] Order %v: Item %v is not oversold\n",
+				orderInfo.OrderId, item.ItemId)
 		}
 	}
 
-	if emailItemString != "" {
-		log.Printf("[INFO] Sending email for order %v to %s\n", orderInfo.OrderId, order.Items[0].Shipmentaddress.EmailAddress)
-		customerName := fmt.Sprintf("%s %s", order.Items[0].Shipmentaddress.FirstName, order.Items[0].Shipmentaddress.LastName)
-		email.SendEmail(order.Items[0].Shipmentaddress.EmailAddress, emailItemString, customerName, orderInfo.OrderId)
+	if len(emailItems) > 0 {
+		log.Printf("[INFO] Sending email for order %v to %s\n",
+			orderInfo.OrderId, order.Items[0].Shipmentaddress.EmailAddress)
+
+		customerName := fmt.Sprintf("%s %s",
+			order.Items[0].Shipmentaddress.FirstName,
+			order.Items[0].Shipmentaddress.LastName)
+
+		// send slice instead of single string
+		email.SendEmail(
+			order.Items[0].Shipmentaddress.EmailAddress,
+			emailItems,
+			customerName,
+			orderInfo.OrderId,
+		)
 	}
 
 	return nil
