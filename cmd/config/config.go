@@ -11,6 +11,11 @@ type Config struct {
 	ApiBaseURL           string   `json:"ApiBaseURL"`
 	ApiVersion           string   `json:"ApiVersion"`
 	ExcludedOrderIdStart []string `json:"ExcludedOrderIdStart"`
+	SmtpHost             string   `json:"SmtpHost"`
+	SmtpPort             string   `json:"SmtpPort"`
+	SmtpUsername         string   `json:"SmtpUsername"`
+	SmtpPassword         string   `json:"SmtpPassword"`
+	SmtpSenderEmail      string   `json:"SmtpSenderEmail"`
 }
 
 var Conf Config

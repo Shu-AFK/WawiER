@@ -6,10 +6,11 @@ import (
 	"net/smtp"
 	"os"
 
+	"github.com/Shu-AFK/WawiER/cmd/config"
 	"github.com/Shu-AFK/WawiER/cmd/defines"
 )
 
-type EmailConfig struct {
+type EConf struct {
 	From     string
 	Password string
 	Host     string
@@ -17,27 +18,40 @@ type EmailConfig struct {
 	Username string
 }
 
-func LoadEmailConfig() (*EmailConfig, error) {
-	requiredVars := map[string]string{
-		"From":     os.Getenv(defines.WawierEmailAddrEnv),
-		"Password": os.Getenv(defines.WawierEmailPassEnv),
-		"Host":     os.Getenv(defines.WawierEmailSMTPHostEnv),
-		"Port":     os.Getenv(defines.WawierSMTPPortEnv),
-		"Username": os.Getenv(defines.WawierEmailSMTPUserEnv),
+func LoadEmailConfig() (*EConf, error) {
+	from := os.Getenv(defines.WawierEmailAddrEnv)
+	pass := os.Getenv(defines.WawierEmailPassEnv)
+	host := os.Getenv(defines.WawierEmailSMTPHostEnv)
+	port := os.Getenv(defines.WawierSMTPPortEnv)
+	user := os.Getenv(defines.WawierEmailSMTPUserEnv)
+
+	// Fallback to config.Conv if env vars are empty
+	if from == "" {
+		from = config.Conf.SmtpSenderEmail
+	}
+	if pass == "" {
+		pass = config.Conf.SmtpPassword
+	}
+	if host == "" {
+		host = config.Conf.SmtpHost
+	}
+	if port == "" {
+		port = config.Conf.SmtpPort
+	}
+	if user == "" {
+		user = config.Conf.SmtpUsername
 	}
 
-	for key, val := range requiredVars {
-		if val == "" {
-			return nil, fmt.Errorf("missing environment variable for %s", key)
-		}
+	if from == "" || pass == "" || host == "" || port == "" || user == "" {
+		return nil, fmt.Errorf("missing SMTP configuration values (env vars or config)")
 	}
 
-	return &EmailConfig{
-		From:     requiredVars["From"],
-		Password: requiredVars["Password"],
-		Host:     requiredVars["Host"],
-		Port:     requiredVars["Port"],
-		Username: requiredVars["Username"],
+	return &EConf{
+		From:     from,
+		Password: pass,
+		Host:     host,
+		Port:     port,
+		Username: user,
 	}, nil
 }
 
