@@ -46,11 +46,14 @@ func LoadEmailConfig() (*EmailConfig, error) {
 func buildPlainTextBody(customerName, orderID, items string) string {
 	return fmt.Sprintf(
 		"Sehr geehrte/r %s,\r\n\r\n"+
-			"vielen Dank für Ihre Bestellung (Bestellnummer: %s).\r\n\r\n"+
-			"Leider sind folgende Artikel momentan nicht sofort lieferbar, da ein Überverkauf stattgefunden hat:\r\n\r\n"+
-			"%s\r\n"+
-			"Wir werden Sie informieren, sobald die Artikel wieder verfügbar sind oder eine Teillieferung erfolgt.\r\n\r\n"+
-			"Vielen Dank für Ihr Verständnis.\r\n\r\n"+
+			"wir möchten Sie darüber informieren, dass einige Artikel Ihrer Bestellung (Bestellnummer: %s) momentan nicht vorrätig sind:\r\n\r\n"+
+			"%s\r\n\r\n"+
+			"Damit Ihre Bestellung dennoch schnellstmöglich bearbeitet werden kann, bieten wir Ihnen folgende Optionen an:\r\n"+
+			"- Auf die Lieferung der Artikel warten.\r\n"+
+			"- Alternative Produkte auswählen.\r\n"+
+			"- Die nicht verfügbaren Artikel stornieren und den Rest der Bestellung erhalten.\r\n\r\n"+
+			"Bitte antworten Sie auf diese E-Mail oder nutzen Sie Ihr Kundenkonto, um uns Ihre Präferenz mitzuteilen.\r\n\r\n"+
+			"Wir entschuldigen uns für die Unannehmlichkeiten und danken Ihnen für Ihre Geduld.\r\n\r\n"+
 			"Mit freundlichen Grüßen,\r\nIhr Shop-Team",
 		customerName, orderID, items,
 	)
@@ -58,15 +61,30 @@ func buildPlainTextBody(customerName, orderID, items string) string {
 
 func buildHTMLBody(customerName, orderID, items string) string {
 	return fmt.Sprintf(
-		"<!doctype html><html><body style=\"font-family:Arial, sans-serif;\">\r\n"+
-			"<p>Sehr geehrte/r %s,</p>\r\n"+
-			"<p>vielen Dank für Ihre Bestellung (Bestellnummer: <strong>%s</strong>).</p>\r\n"+
-			"<p>Leider sind folgende Artikel momentan nicht sofort lieferbar, da ein Überverkauf stattgefunden hat:</p>\r\n"+
-			"<pre style=\"background:#f6f8fa;padding:12px;border-radius:6px;\">%s</pre>\r\n"+
-			"<p>Wir werden Sie informieren, sobald die Artikel wieder verfügbar sind oder eine Teillieferung erfolgt.</p>\r\n"+
-			"<p>Vielen Dank für Ihr Verständnis.</p>\r\n"+
-			"<p>Mit freundlichen Grüßen,<br>Ihr Shop-Team</p>\r\n"+
-			"</body></html>",
+		"<!doctype html><html lang=\"de\"><head><meta charset=\"UTF-8\">"+
+			"<style>"+
+			"body{font-family:Arial,sans-serif;background:#f4f6f8;color:#333;padding:20px;}"+
+			".container{background:#fff;max-width:600px;margin:auto;padding:20px 30px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1);}"+
+			"h2{color:#2a7ae2;margin-top:0;}"+
+			"ul{padding-left:20px;}"+
+			"li{margin-bottom:6px;}"+
+			".items{background:#f6f8fa;padding:12px;border-radius:6px;font-family:monospace;white-space:pre-line;}"+
+			"</style></head><body>"+
+			"<div class=\"container\">"+
+			"<h2>Wichtige Information zu Ihrer Bestellung</h2>"+
+			"<p>Sehr geehrte/r %s,</p>"+
+			"<p>wir möchten Sie darüber informieren, dass einige Artikel Ihrer Bestellung (Bestellnummer: <strong>%s</strong>) momentan nicht vorrätig sind:</p>"+
+			"<div class=\"items\">%s</div>"+
+			"<p>Damit Ihre Bestellung dennoch schnellstmöglich bearbeitet werden kann, bieten wir Ihnen folgende Optionen an:</p>"+
+			"<ul>"+
+			"<li>Auf die Lieferung der Artikel warten.</li>"+
+			"<li>Alternative Produkte auswählen.</li>"+
+			"<li>Die nicht verfügbaren Artikel stornieren und den Rest der Bestellung erhalten.</li>"+
+			"</ul>"+
+			"<p>Bitte antworten Sie auf diese E-Mail oder nutzen Sie Ihr Kundenkonto, um uns Ihre Präferenz mitzuteilen.</p>"+
+			"<p>Wir entschuldigen uns für die Unannehmlichkeiten und danken Ihnen für Ihre Geduld.</p>"+
+			"<p>Mit freundlichen Grüßen,<br>Ihr Shop-Team</p>"+
+			"</div></body></html>",
 		customerName, orderID, items,
 	)
 }
