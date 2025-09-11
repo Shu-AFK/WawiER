@@ -9,8 +9,6 @@ import (
 	"github.com/Shu-AFK/WawiER/cmd/defines"
 )
 
-const Subject = "Info zu Ihrer Bestellung"
-
 type EmailConfig struct {
 	From     string
 	Password string
@@ -119,7 +117,7 @@ func SendEmail(toAddress, items, customerName, orderID string) {
 			"Content-Transfer-Encoding: 7bit\r\n\r\n"+
 			"%s\r\n\r\n"+
 			"--%s--\r\n",
-		cfg.From, toAddress, Subject, boundary,
+		cfg.From, toAddress, fmt.Sprintf("Wichtige Informationen zu Ihrer Bestellung %s", orderID), boundary,
 		boundary,
 		textBody,
 		boundary,
