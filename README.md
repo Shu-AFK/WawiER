@@ -83,7 +83,7 @@ Optional flags:
 
 ### Example Email Notification
 
-![Example Email](assets/example_email/example_email.png)
+![Example Email](assets/example_email.png)
 
 This is an example of the email notification sent to customers if oversell occurs.
 
