@@ -5,8 +5,6 @@
 WawiER is a small Go project for processing orders from JTL Wawi.  
 It checks if items are oversold and notifies customers via email.
 
-**⚠️ Note:** WawiER requires **administrator privileges** to run because it needs to exclude its folder from Windows Defender. This is necessary for receiving workflow web requests without interference from the antivirus.
-
 ---
 
 ## Features
@@ -61,9 +59,7 @@ cd WawiER
 go build -o WawiER.exe github.com/Shu-AFK/WawiER
 ```
 
-4. Place your `config.json` in the same folder or specify the path using the `-config` flag.
-
-**⚠️ Reminder:** Run the executable as an **administrator** to allow Windows Defender exclusions.
+4. Place your `config.json` in the same folder or specify the path using the `-config` flag
 
 ---
 
