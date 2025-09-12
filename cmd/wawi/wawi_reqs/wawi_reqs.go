@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/Shu-AFK/WawiER/cmd/defines"
+	"github.com/Shu-AFK/WawiER/cmd/logger"
 )
 
 func QuerySalesOrders(id string) (*Order, error) {
@@ -110,7 +110,7 @@ func wawiCreateRequest(method string, url string, body io.Reader) (*http.Respons
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	log.Printf("[INFO] Made request to: %s\n", req.URL)
+	logger.Log.Printf("[INFO] Made request to: %s\n", req.URL)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err

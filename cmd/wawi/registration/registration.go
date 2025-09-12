@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Shu-AFK/WawiER/cmd/defines"
+	"github.com/Shu-AFK/WawiER/cmd/logger"
 )
 
 // https://developer.jtl-software.com/products/erpapi/openapi/appregistration/authenticationheader_registerappasync
@@ -54,8 +55,8 @@ func postAppRegistration() (*defines.RegistrationResponse, error) {
 		defer resp.Body.Close()
 
 		if resp.StatusCode == http.StatusCreated && defines.APIVersion == "1.1" {
-			fmt.Println("Please change the api version in your config.json to 1.0 for future use.")
-			fmt.Println("Please change your request url to include a trailing v1/ for future use.")
+			logger.Log.Println("Please change the api version in your config.json to 1.0 for future use.")
+			logger.Log.Println("Please change your request url to include a trailing v1/ for future use.")
 		}
 
 		defines.APIVersion = "1.0"
