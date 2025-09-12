@@ -106,4 +106,4 @@ Contributions are welcome! Please submit pull requests or issues on [GitHub](htt
 
 ## License
 
-This project is licensed under the [Apache](LICENSE.md) License.
+This project is licensed under the [Apache-2.0](LICENSE.md) License.
