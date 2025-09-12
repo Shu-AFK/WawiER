@@ -15,8 +15,6 @@ It checks if items are oversold and notifies customers via email.
 - Fetches order data via REST API
 - Checks stock levels for oversell
 - Sends email notifications to inform customers if an oversell occurred
-- Configurable logging (console, file, both, or none)
-- Supports SMTP email servers for notifications
 
 ---
 
@@ -82,6 +80,44 @@ Optional flags:
 - `-config <path>` → Path to a custom config file (defaults to `config.json`)
 - `-log <mode>` → Override logging mode (`none`, `console`, `file`, `both`)
 - `-logfile <path>` → Override log file path if using file or both mode
+
+### Example Email Notification
+
+![Example Email](assets/example_email/example_email.png)
+
+This is an example of the email notification sent to customers if oversell occurs.
+
+---
+
+## Configuring JTL Wawi Workflow
+
+To integrate WawiER with JTL Wawi, create a workflow that triggers when an order is created:
+
+1. Open JTL Wawi and navigate to **Workflow Designer**.
+2. Create a new workflow for **"Auftrag Erstellt"** (Order Created).
+3. Add a **Webhook / HTTP Request** action with the following settings:
+
+**URL:**
+```
+http://127.0.0.1:8080/api/neuerAuftrag
+```
+
+**Headers:**
+```
+Content-Type: application/json
+Authentication: Bearer c4b55569-3d82-44a0-b9e1-79a06b79eaf1
+```
+
+**Body:**
+```json
+{
+    "orderId": "{{ Vorgang.Stammdaten.Auftragsnummer }}"
+}
+```
+
+4. Save and activate the workflow. WawiER will now receive new orders in real time.
+
+> **Tip:** Make sure WawiER is running as administrator so it can receive the requests without interference from Windows Defender.
 
 ---
 
