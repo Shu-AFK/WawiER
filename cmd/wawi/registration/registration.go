@@ -41,9 +41,9 @@ func postAppRegistration() (*defines.RegistrationResponse, error) {
 	if resp.StatusCode == http.StatusNotFound {
 		resp.Body.Close()
 		retryURL := defines.APIBaseURL + "v1/authentication"
-		retryReq, rerr := http.NewRequest("POST", retryURL, bytes.NewBuffer(jsonData))
-		if rerr != nil {
-			return nil, fmt.Errorf("failed to create retry request: %v", rerr)
+		retryReq, err := http.NewRequest("POST", retryURL, bytes.NewBuffer(jsonData))
+		if err != nil {
+			return nil, fmt.Errorf("failed to create retry request: %v", err)
 		}
 		retryReq.Header.Set("Content-Type", "application/json")
 		retryReq.Header.Set("X-ChallengeCode", defines.XChallangeCode)

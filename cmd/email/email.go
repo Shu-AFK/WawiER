@@ -2,13 +2,13 @@ package email
 
 import (
 	"fmt"
-	"log"
 	"net/smtp"
 	"os"
 	"strings"
 
 	"github.com/Shu-AFK/WawiER/cmd/config"
 	"github.com/Shu-AFK/WawiER/cmd/defines"
+	"github.com/Shu-AFK/WawiER/cmd/logger"
 )
 
 type EConf struct {
@@ -67,7 +67,7 @@ func buildPlainTextBody(customerName, orderID string, items []string) string {
 			"- Auf die Lieferung der Artikel warten.\r\n"+
 			"- Alternative Produkte auswählen.\r\n"+
 			"- Die nicht verfügbaren Artikel stornieren und den Rest der Bestellung erhalten.\r\n\r\n"+
-			"Bitte antworten Sie auf diese E-Mail oder nutzen Sie Ihr Kundenkonto, um uns Ihre Präferenz mitzuteilen.\r\n\r\n"+
+			"Bitte antworten Sie auf diese E-Mail, um uns Ihre Präferenz mitzuteilen.\r\n\r\n"+
 			"Wir entschuldigen uns für die Unannehmlichkeiten und danken Ihnen für Ihre Geduld.\r\n\r\n"+
 			"Mit freundlichen Grüßen,\r\nIhr Shop-Team",
 		customerName, orderID, itemList,
@@ -103,7 +103,7 @@ func buildHTMLBody(customerName, orderID string, items []string) string {
 			"<li>Alternative Produkte auswählen.</li>"+
 			"<li>Die nicht verfügbaren Artikel stornieren und den Rest der Bestellung erhalten.</li>"+
 			"</ul>"+
-			"<p>Bitte antworten Sie auf diese E-Mail oder nutzen Sie Ihr Kundenkonto, um uns Ihre Präferenz mitzuteilen.</p>"+
+			"<p>Bitte antworten Sie auf diese E-Mail, um uns Ihre Präferenz mitzuteilen.</p>"+
 			"<p>Wir entschuldigen uns für die Unannehmlichkeiten und danken Ihnen für Ihre Geduld.</p>"+
 			"<p>Mit freundlichen Grüßen,<br>Ihr Shop-Team</p>"+
 			"</div></body></html>",
@@ -114,7 +114,7 @@ func buildHTMLBody(customerName, orderID string, items []string) string {
 func SendEmail(toAddress string, items []string, customerName, orderID string) {
 	cfg, err := LoadEmailConfig()
 	if err != nil {
-		log.Printf("[ERROR] Email config not set: %v", err)
+		logger.Log.Printf("[ERROR] Email config not set: %v", err)
 		return
 	}
 
@@ -151,9 +151,9 @@ func SendEmail(toAddress string, items []string, customerName, orderID string) {
 
 	err = smtp.SendMail(cfg.Host+":"+cfg.Port, auth, cfg.From, to, message)
 	if err != nil {
-		log.Printf("[ERROR] Fehler beim Senden der Email an %s: %v", toAddress, err)
+		logger.Log.Printf("[ERROR] Fehler beim Senden der Email an %s: %v", toAddress, err)
 		return
 	}
 
-	log.Printf("[INFO] Email erfolgreich an %s gesendet", toAddress)
+	logger.Log.Printf("[INFO] Email erfolgreich an %s gesendet", toAddress)
 }
