@@ -77,9 +77,7 @@ Run the compiled executable with administrator privileges:
 
 Optional flags:
 
-- `-config <path>` → Path to a custom config file (defaults to `config.json`)
-- `-log <mode>` → Override logging mode (`none`, `console`, `file`, `both`)
-- `-logfile <path>` → Override log file path if using file or both mode
+- `-config <path>` → Path to a custom config file (defaults to `.\config.json`)
 
 ### Example Email Notification
 
